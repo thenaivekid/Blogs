@@ -2,12 +2,14 @@
 #include <stdlib.h>
 #include <conio.h>
 #include <string.h>
+#include <dirent.h>
 
 void addarticle();
 
 void viewarticle();
 
 void editarticle();
+void viewAll();
 
 struct blog
 
@@ -35,10 +37,11 @@ int main()
 
         printf("\n\tEDIT article\t[3]");
 
-        printf("\n\tEXIT\t\t[4]");
+        printf("\n\tView all\t[4]");
+        printf("\n\tEXIT\t\t[5]");
 
         printf("\n\n\tENTER YOUR CHOICE:");
-
+        fflush(stdin);
         scanf("%d", &ch);
 
         switch (ch)
@@ -64,12 +67,8 @@ int main()
             break;
 
         case 4:
-
-            printf("\n\n\t\tTHANK YOU FOR USING THE SOFTWARE ");
-
+            viewAll();
             getch();
-
-            exit(0);
 
         default:
 
@@ -207,5 +206,73 @@ void editarticle()
     {
         printf("File not found!");
         getch();
+    }
+}
+
+void viewAll()
+{
+    DIR *dir;
+    struct dirent *ent;
+    char strings[20][50];
+    int i = 0;
+
+    /* add some strings to the array */
+
+    if ((dir = opendir(".")) != NULL)
+    {
+        /* print all the files and directories within directory */
+        while ((ent = readdir(dir)) != NULL)
+        {
+            /* check if the file has a .c extension */
+            if (strstr(ent->d_name, ".exe") == NULL)
+            {
+                snprintf(strings[i], 50, "%s", ent->d_name);
+                i++;
+            }
+        }
+        closedir(dir);
+    }
+    else
+    {
+        /* could not open directory */
+        printf("Couldn't open");
+        getch();
+    }
+
+    char filename[50];
+    int choice = 1;
+    while (choice == 1)
+    { /* print the strings in the array */
+        for (i = 0; i < 20; i++)
+        {
+            printf("%s\n", strings[i]);
+        }
+        struct blog article;
+        fflush(stdin);
+        printf("\nEnter the name of the blog you want to read: ");
+
+        scanf("%s", filename);
+        FILE *fp;
+        fp = fopen(filename, "rb");
+        if (fp != NULL)
+        {
+
+            system("cls");
+
+            fread(&article, sizeof(article), 1, fp);
+
+            printf("\nTITLE: %s", article.title);
+
+            printf("\nBy: %s", article.username);
+
+            printf("\n%s", article.content);
+            fclose(fp);
+        }
+        else
+        {
+            printf("\nFile not found!\n");
+        }
+        printf("\n\n\n\n\nEnter 1 for another blog \nEnter any other integer for main menu: ");
+        scanf("%d", &choice);
     }
 }

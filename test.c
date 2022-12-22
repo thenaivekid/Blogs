@@ -1,16 +1,28 @@
 #include <stdio.h>
-#include <conio.h>
+#include <string.h>
 
-#define MAX_LEN 100 // maximum length of a line
+#define MAX_STRINGS 10
+#define MAX_LENGTH 50
 
 int main()
 {
-    char line[MAX_LEN]; // array to store the input line
+    char strings[MAX_STRINGS][MAX_LENGTH];
+    int i;
 
-    // Read multiple lines of input from the user until an empty line is entered
-    fgets(line, MAX_LEN, stdin);
+    /* add some strings to the array */
+    for (i = 0; i < MAX_STRINGS; i++)
+    {
+        char str[MAX_LENGTH];
+        printf("Enter a string: ");
+        scanf("%s", str);
+        snprintf(strings[i], MAX_LENGTH, "%s", str);
+    }
 
-    printf("You entered: %s", line);
-    getch();
+    /* print the strings in the array */
+    for (i = 0; i < MAX_STRINGS; i++)
+    {
+        printf("%s\n", strings[i]);
+    }
+
     return 0;
 }

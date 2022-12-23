@@ -3,12 +3,23 @@
 #include <conio.h>
 #include <string.h>
 #include <dirent.h>
+#include <windows.h>
+#include <dos.h>
+
+void gotoxy(int x, int y)
+{
+    COORD c;
+    c.X = x;
+    c.Y = y;
+    SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), c);
+}
 
 void addarticle();
 
 void viewarticle();
 
 void editarticle();
+
 void viewAll();
 
 struct blog
@@ -29,16 +40,19 @@ int main()
 
     {
 
-        printf("\n\n\t\tMAIN MENU:");
-
-        printf("\n\n\tADD article\t[1]");
-
-        printf("\n\tVIEW article\t[2]");
-
-        printf("\n\tEDIT article\t[3]");
-
-        printf("\n\tView all\t[4]");
-        printf("\n\tEXIT\t\t[5]");
+        system("cls");
+        gotoxy(30, 1);
+        printf("\xB3\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2 Blogs \xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB3");
+        gotoxy(31, 4);
+        printf("\xB3\xDB\xDB\xDB\xDB\xDB\xDB\xDB\xDB 1.Add New");
+        gotoxy(31, 7);
+        printf("\xB3\xDB\xDB\xDB\xDB\xDB\xDB\xDB\xDB 2.Search blog");
+        gotoxy(31, 10);
+        printf("\xB3\xDB\xDB\xDB\xDB\xDB\xDB\xDB\xDB 3.Edit blog");
+        gotoxy(31, 13);
+        printf("\xB3\xDB\xDB\xDB\xDB\xDB\xDB\xDB\xDB 4.All blogs");
+        gotoxy(31, 16);
+        printf("\xB3\xDB\xDB\xDB\xDB\xDB\xDB\xDB\xDB 5.Delete");
 
         printf("\n\n\tENTER YOUR CHOICE:");
         fflush(stdin);
@@ -113,8 +127,7 @@ void addarticle()
 
     printf("\n\tENTER Content: ");
 
-    scanf("%s", article.content);
-
+    fgets(article.content, 1024, stdin);
     fp = fopen(article.title, "wb+");
 
     fwrite(&article, sizeof(article), 1, fp);
@@ -195,7 +208,8 @@ void editarticle()
 
         fclose(fpte);
         printf("\nEnter new content: \n");
-        scanf("%s", article.content);
+        fflush(stdin);
+        fgets(article.content, 1024, stdin);
         fpte = fopen(filename, "wb");
         fwrite(&article, sizeof(article), 1, fpte);
         fclose(fpte);

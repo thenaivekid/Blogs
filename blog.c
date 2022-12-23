@@ -5,6 +5,7 @@
 #include <dirent.h>
 #include <windows.h>
 #include <dos.h>
+#include "authentication.h"
 
 void gotoxy(int x, int y)
 {
@@ -22,6 +23,17 @@ void editarticle();
 
 void viewAll();
 
+void viewUser();
+
+struct user
+{
+    char fullName[50];
+    char email[50];
+    char password[50];
+    char username[50];
+    char phone[50];
+};
+
 struct blog
 
 {
@@ -33,6 +45,8 @@ struct blog
 int main()
 
 {
+    char *username;
+    username = authentication();
 
     int ch;
 
@@ -42,7 +56,7 @@ int main()
 
         system("cls");
         gotoxy(30, 1);
-        printf("\xB3\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2 Blogs \xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB3");
+        printf("\xB3\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2Welcome to Blogs %s\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB3", username);
         gotoxy(31, 4);
         printf("\xB3\xDB\xDB\xDB\xDB\xDB\xDB\xDB\xDB 1.Add New");
         gotoxy(31, 7);
@@ -52,7 +66,7 @@ int main()
         gotoxy(31, 13);
         printf("\xB3\xDB\xDB\xDB\xDB\xDB\xDB\xDB\xDB 4.All blogs");
         gotoxy(31, 16);
-        printf("\xB3\xDB\xDB\xDB\xDB\xDB\xDB\xDB\xDB 5.Delete");
+        printf("\xB3\xDB\xDB\xDB\xDB\xDB\xDB\xDB\xDB 5.Connect with bloggers");
 
         printf("\n\n\tENTER YOUR CHOICE:");
         fflush(stdin);
@@ -82,7 +96,11 @@ int main()
 
         case 4:
             viewAll();
-            getch();
+            break;
+
+        case 5:
+            viewUser();
+            break;
 
         default:
 
@@ -288,5 +306,48 @@ void viewAll()
         }
         printf("\n\n\n\n\nEnter 1 for another blog \nEnter any other integer for main menu: ");
         scanf("%d", &choice);
+    }
+}
+
+void viewUser()
+{
+    struct user usr[10];
+    FILE *fp;
+    fp = fopen("Users.txt", "r");
+    for (int i = 0; i < 10; i++)
+    {
+        fread(&usr[i], sizeof(usr[i]), 1, fp);
+    }
+    for (int i = 0; i < 10; i++)
+    {
+        printf("\n%s", usr[i].username);
+    }
+    printf("\nEnter the name: ");
+    fflush(stdin);
+    char name[50];
+    fgets(name, 50, stdin);
+    name[strlen(name) - 1] = 0;
+    // to check if any user is found.
+    int check = 0;
+    for (int i = 0; i < 10; i++)
+    {
+        if (!strcmp(usr[i].username, name))
+        {
+            system("cls");
+            printf("\n\t\t\t\t\t\tWelcome %s\n", usr[i].username);
+            printf("Your Details>>>\n\n|Full Name:\t%s", usr[i].fullName);
+            printf("\n|Email:\t\t%s", usr[i].email);
+            printf("\n|Username:\t%s", usr[i].username);
+            printf("\n|Contact no.:\t%s", usr[i].phone);
+            getch();
+            check = 1;
+            break;
+        }
+    }
+    fclose(fp);
+    if (check == 0)
+    {
+        printf("\n No user found.\n");
+        getch();
     }
 }

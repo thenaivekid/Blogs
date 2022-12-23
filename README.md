@@ -19,3 +19,5 @@ gcc authentication.c blog.c -o run.exe
 ```
 ./run
 ```
+
+`blog.c` first authenticates the user using `authentication.c` included in `authentication.h`. Then asks the user to choose what action to take. According to the choice of the user, program takes the user to requested places. `addarticle` lets user to add new blog to the platform. `viewarticle` lets user to view the article by searching while `viewall` lets user choose the article by displaying all the files in the current directory using `dirent.h`. `editarticle` lets user edit existing article by reading old file and saving new file with edited content. `viewUser` lets user to view contact details of the queried blogger if one exists.

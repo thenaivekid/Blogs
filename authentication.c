@@ -53,7 +53,7 @@ NOT_ENOUGH:
     }
     if (count < 7)
     {
-        printf("\nPassword should be at least 8 characters containing lowercase, uppercase letters and symbols.\n");
+        printf("\nPassword should be at least 8 characters\n");
         goto NOT_ENOUGH;
     }
 }

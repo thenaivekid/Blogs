@@ -4,16 +4,8 @@
 #include <string.h>
 #include <dirent.h>
 #include <windows.h>
-#include <dos.h>
 #include "authentication.h"
 
-void gotoxy(int x, int y)
-{
-    COORD c;
-    c.X = x;
-    c.Y = y;
-    SetConsoleCursorPosition(GetStdHandle(STD_OUTPUT_HANDLE), c);
-}
 
 void addarticle();
 
@@ -25,16 +17,15 @@ void viewAll();
 
 void viewUser();
 
-struct user
+struct User
 {
-    char fullName[50];
     char email[50];
     char password[50];
-    char username[50];
-    char phone[50];
+    char name[50];
+    char contacts[200];
 };
 
-struct blog
+struct Blog
 
 {
     char title[30];
@@ -45,76 +36,62 @@ struct blog
 int main()
 
 {
-    char *username;
-    username = authentication();
+    auth();
 
     int ch;
 
-    while (1)
+    printf("Enter 1 to add article:\n");
+    printf("Enter 2 to view article:\n");
+    printf("Enter 3 to edit article:\n");
+    printf("Enter 4 to view all articles:\n");
+    printf("Enter 5 to connect with Bloggers:\n");
+
+    printf("\n\n\tENTER YOUR CHOICE:");
+    fflush(stdin);
+    scanf("%d", &ch);
+
+    switch (ch)
 
     {
 
-        system("cls");
-        gotoxy(30, 1);
-        printf("\xB3\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2Welcome to Blogs %s\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB2\xB3", username);
-        gotoxy(31, 4);
-        printf("\xB3\xDB\xDB\xDB\xDB\xDB\xDB\xDB\xDB 1.Add New");
-        gotoxy(31, 7);
-        printf("\xB3\xDB\xDB\xDB\xDB\xDB\xDB\xDB\xDB 2.Search blog");
-        gotoxy(31, 10);
-        printf("\xB3\xDB\xDB\xDB\xDB\xDB\xDB\xDB\xDB 3.Edit blog");
-        gotoxy(31, 13);
-        printf("\xB3\xDB\xDB\xDB\xDB\xDB\xDB\xDB\xDB 4.All blogs");
-        gotoxy(31, 16);
-        printf("\xB3\xDB\xDB\xDB\xDB\xDB\xDB\xDB\xDB 5.Connect with bloggers");
+    case 1:
 
-        printf("\n\n\tENTER YOUR CHOICE:");
-        fflush(stdin);
-        scanf("%d", &ch);
+        addarticle();
 
-        switch (ch)
+        break;
 
-        {
+    case 2:
 
-        case 1:
+        viewarticle();
 
-            addarticle();
+        break;
 
-            break;
+    case 3:
 
-        case 2:
+        editarticle();
 
-            viewarticle();
+        break;
 
-            break;
+    case 4:
+        viewAll();
+        break;
 
-        case 3:
+    case 5:
+        viewUser();
+        break;
 
-            editarticle();
+    default:
 
-            break;
+        printf("\nYOU ENTERED WRONG CHOICE..");
 
-        case 4:
-            viewAll();
-            break;
+        printf("\nPRESS ANY KEY TO TRY AGAIN");
 
-        case 5:
-            viewUser();
-            break;
+        getch();
 
-        default:
-
-            printf("\nYOU ENTERED WRONG CHOICE..");
-
-            printf("\nPRESS ANY KEY TO TRY AGAIN");
-
-            getch();
-
-            break;
-        }
-
-        system("cls");
+        break;
     }
+
+
 
     return 0;
 }
@@ -127,7 +104,7 @@ void addarticle()
 
     FILE *fp;
 
-    struct blog article;
+    struct Blog article;
 
     fflush(stdin);
 
@@ -167,7 +144,7 @@ void viewarticle()
 
     system("cls");
 
-    struct blog article;
+    struct Blog article;
 
     char filename[30];
     fflush(stdin);
@@ -205,7 +182,7 @@ void editarticle()
 
     FILE *fpte;
 
-    struct blog article;
+    struct Blog article;
     char filename[30];
     fflush(stdin);
     printf("\nEnter the name of the file.\n");
@@ -279,7 +256,7 @@ void viewAll()
         {
             printf("%s\n", strings[i]);
         }
-        struct blog article;
+        struct Blog article;
         fflush(stdin);
         printf("\nEnter the name of the blog you want to read: ");
 
@@ -311,37 +288,34 @@ void viewAll()
 
 void viewUser()
 {
-    struct user usr[10];
+    struct User user[10];
     FILE *fp;
     fp = fopen("Users.txt", "r");
     for (int i = 0; i < 10; i++)
     {
-        fread(&usr[i], sizeof(usr[i]), 1, fp);
+        fread(&user[i], sizeof(user[i]), 1, fp);
     }
     for (int i = 0; i < 10; i++)
     {
-        printf("\n%s", usr[i].username);
+        printf("\n%s", user[i].name);
     }
     printf("\nEnter the name: ");
     fflush(stdin);
     char name[50];
     fgets(name, 50, stdin);
-    name[strlen(name) - 1] = 0;
     // to check if any user is found.
     int check = 0;
     for (int i = 0; i < 10; i++)
     {
-        if (!strcmp(usr[i].username, name))
+        if (!strcmp(user[i].name, name))
         {
             system("cls");
-            printf("\n\t\t\t\t\t\tWelcome %s\n", usr[i].username);
-            printf("Your Details>>>\n\n|Full Name:\t%s", usr[i].fullName);
-            printf("\n|Email:\t\t%s", usr[i].email);
-            printf("\n|Username:\t%s", usr[i].username);
-            printf("\n|Contact no.:\t%s", usr[i].phone);
+            printf("\n\t\t\t\t\t %s\n", user[i].name);
+            printf("\n|Email:\t\t%s", user[i].email);
+            printf("\n|Contacts:\t%s", user[i].contacts);
             getch();
             check = 1;
-            break;
+            return;
         }
     }
     fclose(fp);
@@ -349,5 +323,6 @@ void viewUser()
     {
         printf("\n No user found.\n");
         getch();
+        return;
     }
 }

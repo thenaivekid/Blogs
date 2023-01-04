@@ -31,19 +31,22 @@ struct Blog
     char title[30];
     char username[50];
     char content[1024];
+    char edited[8];
+
 };
 
 int main()
 
 {
-    auth();
+    // auth();
     int ch;
+    char name[] = "none";
 
     printf("\nEnter 1 to add article:\n");
     printf("Enter 2 to view article:\n");
     printf("Enter 3 to edit article:\n");
     printf("Enter 4 to view all articles:\n");
-    printf("Enter 5 to connect with Bloggers:\n");
+    printf("Enter 5 to view Bloggers:\n");
     printf("Enter 6 to read wiki from Wikipedia.com:\n");
 
     printf("\n\n\tENTER YOUR CHOICE:");
@@ -61,8 +64,8 @@ int main()
         break;
 
     case 2:
-
-        viewarticle();
+        
+        viewarticle(name);
 
         break;
 
@@ -98,14 +101,15 @@ int main()
 
     return 0;
 }
-
 void addarticle()
-
 {
 
-    FILE *fp;
+
+    FILE *fp, *fptr;
 
     struct Blog article;
+
+    fflush(stdin);
 
     printf("\n\tENTER TITLE: ");
 
@@ -116,35 +120,37 @@ void addarticle()
     printf("\n\tENTER USERNAME: ");
 
     scanf("%s", article.username);
-    // clears the input stream
+
+    fflush(stdin);
+
+    printf("\n\tENTER Content: ");
     getchar();
-    printf("Enter the content of the blog: \n");
-    fgets(article.content,1024,stdin);
-
+    fgets(article.content, 1024, stdin);
+    strcpy(article.edited, "false");
     fp = fopen(article.title, "wb+");
-
+    fptr = fopen("usersBlog.txt", "ab+");
     fwrite(&article, sizeof(article), 1, fp);
-
+    fwrite(&article, sizeof(article), 1, fptr);
     printf("\nYOUR article HAS BEEN ADDED...\n");
 
     fclose(fp);
-
-    printf("\n\n\tPRESS ANY KEY TO EXIT...");
+    fclose(fptr);
 
 }
 
-void viewarticle()
 
+void viewarticle(char *name)
 {
 
     FILE *fpte;
-
-    struct Blog article;
-
     char filename[30];
-    fflush(stdin);
-    printf("Enter the name of the file.\n");
-    scanf("%s", filename);
+    struct Blog article;
+    if (strcmp(name,"none")==0){
+        printf("Enter the name of the file.\n");
+        scanf("%s", filename);
+    }
+    else
+        strcpy(filename,name);
 
     fpte = fopen(filename, "rb");
     if (fpte != NULL)
@@ -158,11 +164,15 @@ void viewarticle()
         printf("\nBy: %s", article.username);
 
         printf("\n%s", article.content);
+        printf("\nEdited: %s", article.edited);
+
+
         fclose(fpte);
     }
     else
     {
-        printf("\nFile not found!\n");
+        printf("\nFile not found! \nTry to find it on the wikipedia here:\n");
+        get_wiki();
     }
 }
 
@@ -192,8 +202,10 @@ void editarticle()
 
         fclose(fpte);
         printf("\nEnter new content: \n");
-        fflush(stdin);
+        getchar();
         fgets(article.content, 1024, stdin);
+        strcpy(article.edited,"true");
+
         fpte = fopen(filename, "wb");
         fwrite(&article, sizeof(article), 1, fpte);
         fclose(fpte);
@@ -207,74 +219,14 @@ void editarticle()
 
 void viewAll()
 {
-    DIR *dir;
-    struct dirent *ent;
-    char strings[20][50];
-    int i = 0;
-
-    /* add some strings to the array */
-
-    if ((dir = opendir(".")) != NULL)
-    {
-        /* print all the files and directories within directory */
-        while ((ent = readdir(dir)) != NULL)
-        {
-            /* check if the file has a .c extension */
-            if (strstr(ent->d_name, ".exe") == NULL)
-            {
-                snprintf(strings[i], 50, "%s", ent->d_name);
-                i++;
-            }
-        }
-        closedir(dir);
-    }
-    else
-    {
-        /* could not open directory */
-        printf("Couldn't open");
-    }
-
-    char filename[50];
-    int choice = 1;
-    while (choice == 1)
-    { /* print the strings in the array */
-        for (i = 0; i < 20; i++)
-        {
-            printf("%s\n", strings[i]);
-        }
-        struct Blog article;
-        fflush(stdin);
-        printf("\nEnter the name of the blog you want to read: ");
-
-        scanf("%s", filename);
-        FILE *fp;
-        fp = fopen(filename, "rb");
-        if (fp != NULL)
-        {
-
-    
-            fread(&article, sizeof(article), 1, fp);
-
-            printf("\nTITLE: %s", article.title);
-
-            printf("\nBy: %s", article.username);
-
-            printf("\n%s", article.content);
-            fclose(fp);
-        }
-        else
-        {
-            printf("\nFile not found!\n");
-        }
-        printf("\n\n\n\n\nEnter 1 for another blog \nEnter any other integer for main menu: ");
-        scanf("%d", &choice);
-    }
+    return;
 }
 
 void viewUser()
 {
     struct User user[10];
-    FILE *fp;
+    struct Blog blog;
+    FILE *fp, *fptr;
     fp = fopen("Users.txt", "r");
     for (int i = 0; i < 10; i++)
     {
@@ -284,28 +236,43 @@ void viewUser()
     {
         printf("\n%s", user[i].name);
     }
-    printf("\nEnter the name: ");
-    fflush(stdin);
+    printf("Choose the blogger: ");
     char name[50];
+    getchar();
     fgets(name, 50, stdin);
+    name[strlen(name) - 1] = 0;
     // to check if any user is found.
+    
     int check = 0;
+
     for (int i = 0; i < 10; i++)
     {
         if (!strcmp(user[i].name, name))
         {
-                printf("\n\t\t\t\t\t %s\n", user[i].name);
+            printf("\n\t\t\t\t\t\t%s\n", user[i].name);
             printf("\n|Email:\t\t%s", user[i].email);
-            printf("\n|Contacts:\t%s", user[i].contacts);
-                check = 1;
-            return;
+            printf("\n|Contact no.:\t%s", user[i].contacts);
+            printf("\n\t\t\tBlogs\n\n");
+            fptr = fopen("usersBlog.txt", "r");
+            while (fread(&blog, sizeof(blog), 1, fptr))
+            {
+                if (!strcmp(blog.username, user[i].name))
+                {
+                    printf("\n\n\nTitle:%s\n\n", blog.title);
+                    printf("%s\n", blog.content);
+                    printf("Edited: %s\n", blog.edited);
+                    
+                }
+            }
+            fclose(fptr);
+            check = 1;
+            break;
         }
     }
     fclose(fp);
     if (check == 0)
     {
         printf("\n No user found.\n");
-        return;
     }
 }
 

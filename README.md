@@ -12,7 +12,7 @@ This is app written in C program that does the following:
 
 ### To build  the executable file from codes all you need to do is run the following command in the folder containing source codes: 
 ```
-gcc authentication.c blog.c -o run.exe
+gcc auth.c blog.c -o run.exe
 ```
 
 ### To run the program

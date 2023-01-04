@@ -4,7 +4,6 @@
 #include <string.h>
 #include <stdbool.h>
 #include <ctype.h>
-#include <conio.h>
 #include <stdlib.h>
 
 void auth();

@@ -1,9 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <conio.h>
 #include <string.h>
 #include <dirent.h>
-#include <windows.h>
 #include "authentication.h"
 
 
@@ -14,6 +12,8 @@ void viewarticle();
 void editarticle();
 
 void viewAll();
+
+void get_wiki();
 
 void viewUser();
 
@@ -37,14 +37,14 @@ int main()
 
 {
     auth();
-
     int ch;
 
-    printf("Enter 1 to add article:\n");
+    printf("\nEnter 1 to add article:\n");
     printf("Enter 2 to view article:\n");
     printf("Enter 3 to edit article:\n");
     printf("Enter 4 to view all articles:\n");
     printf("Enter 5 to connect with Bloggers:\n");
+    printf("Enter 6 to read wiki from Wikipedia.com:\n");
 
     printf("\n\n\tENTER YOUR CHOICE:");
     fflush(stdin);
@@ -80,13 +80,16 @@ int main()
         viewUser();
         break;
 
+    case 6:
+        get_wiki();
+        break;
+
     default:
 
         printf("\nYOU ENTERED WRONG CHOICE..");
 
         printf("\nPRESS ANY KEY TO TRY AGAIN");
 
-        getch();
 
         break;
     }
@@ -100,13 +103,9 @@ void addarticle()
 
 {
 
-    system("cls");
-
     FILE *fp;
 
     struct Blog article;
-
-    fflush(stdin);
 
     printf("\n\tENTER TITLE: ");
 
@@ -117,12 +116,11 @@ void addarticle()
     printf("\n\tENTER USERNAME: ");
 
     scanf("%s", article.username);
+    // clears the input stream
+    getchar();
+    printf("Enter the content of the blog: \n");
+    fgets(article.content,1024,stdin);
 
-    fflush(stdin);
-
-    printf("\n\tENTER Content: ");
-
-    fgets(article.content, 1024, stdin);
     fp = fopen(article.title, "wb+");
 
     fwrite(&article, sizeof(article), 1, fp);
@@ -133,7 +131,6 @@ void addarticle()
 
     printf("\n\n\tPRESS ANY KEY TO EXIT...");
 
-    getch();
 }
 
 void viewarticle()
@@ -141,8 +138,6 @@ void viewarticle()
 {
 
     FILE *fpte;
-
-    system("cls");
 
     struct Blog article;
 
@@ -155,7 +150,6 @@ void viewarticle()
     if (fpte != NULL)
     {
 
-        system("cls");
 
         fread(&article, sizeof(article), 1, fpte);
 
@@ -165,20 +159,16 @@ void viewarticle()
 
         printf("\n%s", article.content);
         fclose(fpte);
-        getch();
     }
     else
     {
         printf("\nFile not found!\n");
-        getch();
     }
 }
 
 void editarticle()
 
 {
-
-    system("cls");
 
     FILE *fpte;
 
@@ -191,7 +181,6 @@ void editarticle()
     fpte = fopen(filename, "rb");
     if (fpte != NULL)
     {
-        system("cls");
 
         fread(&article, sizeof(article), 1, fpte);
 
@@ -209,12 +198,10 @@ void editarticle()
         fwrite(&article, sizeof(article), 1, fpte);
         fclose(fpte);
         printf("\nChanges saved.");
-        getch();
     }
     else
     {
         printf("File not found!");
-        getch();
     }
 }
 
@@ -245,7 +232,6 @@ void viewAll()
     {
         /* could not open directory */
         printf("Couldn't open");
-        getch();
     }
 
     char filename[50];
@@ -266,8 +252,7 @@ void viewAll()
         if (fp != NULL)
         {
 
-            system("cls");
-
+    
             fread(&article, sizeof(article), 1, fp);
 
             printf("\nTITLE: %s", article.title);
@@ -309,12 +294,10 @@ void viewUser()
     {
         if (!strcmp(user[i].name, name))
         {
-            system("cls");
-            printf("\n\t\t\t\t\t %s\n", user[i].name);
+                printf("\n\t\t\t\t\t %s\n", user[i].name);
             printf("\n|Email:\t\t%s", user[i].email);
             printf("\n|Contacts:\t%s", user[i].contacts);
-            getch();
-            check = 1;
+                check = 1;
             return;
         }
     }
@@ -322,7 +305,12 @@ void viewUser()
     if (check == 0)
     {
         printf("\n No user found.\n");
-        getch();
         return;
     }
+}
+
+void get_wiki() {
+    char command[1000];
+    sprintf(command, "python3 -c \"from wiki import get_wiki; get_wiki()\"");
+    system(command);
 }

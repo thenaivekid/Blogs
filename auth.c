@@ -2,7 +2,6 @@
 #include <string.h>
 #include <stdbool.h>
 #include <ctype.h>
-#include <conio.h>
 #include <stdlib.h>
 
 #define MIN_PASSWORD_LENGTH 8
@@ -67,7 +66,6 @@ int signup() {
     if(!is_valid_password(password1))
     {
         printf("\nPassword must contain at least one uppercase letter, at least one number and at least 8 characters.\n");
-        getch();
         return 0;
     }
 
@@ -77,7 +75,6 @@ int signup() {
     if(strcmp(password1,password2)!=0)
     {
         printf("\nPassword didn't match!\n");
-        getch();
         return 0;
     }
 
@@ -100,7 +97,6 @@ int signup() {
     }
     else
         printf("\n\nSorry! Something went wrong :(");
-    getch();
 
     fclose(fp);
 
@@ -143,22 +139,19 @@ int login()
                 printf("\n\t\t\t\t\t\tWelcome %s\n", user[i].name);
                 printf("\n|Email:\t\t%s", user[i].email);
                 printf("\n|Contact no.:\t%s", user[i].contacts);
-                getch();
-                fclose(fp);
+                        fclose(fp);
                 return 1;
             }
             else
             {
                 printf("\n\nInvalid Password!");
-                getch();
-                return 0;
+                        return 0;
             }
         }
     }
 
     printf("\n\nUser is not registered!\n");
     printf("\nSign in first\n");
-    getch();
     fclose(fp);
     return 0;
 }
@@ -193,7 +186,6 @@ void auth()
         
     case 3:
         printf("\t\t\tBye Bye :)");
-        getch();
         exit(1);
     }
     

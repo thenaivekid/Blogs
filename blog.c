@@ -1,8 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "authentication.h"
-
 
 void addarticle();
 
@@ -11,8 +9,6 @@ void viewarticle();
 void editarticle();
 
 void viewAll();
-
-void get_wiki();
 
 void viewUser();
 
@@ -31,7 +27,6 @@ struct Blog
     char username[50];
     char content[1024];
     char edited[8];
-
 };
 
 int main()
@@ -46,7 +41,6 @@ int main()
     printf("Enter 3 to edit article:\n");
     printf("Enter 4 to view all articles:\n");
     printf("Enter 5 to view Bloggers:\n");
-    printf("Enter 6 to read wiki from Wikipedia.com:\n");
 
     printf("\n\n\tENTER YOUR CHOICE:");
     fflush(stdin);
@@ -63,7 +57,7 @@ int main()
         break;
 
     case 2:
-        
+
         viewarticle(name);
 
         break;
@@ -82,27 +76,19 @@ int main()
         viewUser();
         break;
 
-    case 6:
-        get_wiki();
-        break;
-
     default:
 
         printf("\nYOU ENTERED WRONG CHOICE..");
 
         printf("\nPRESS ANY KEY TO TRY AGAIN");
 
-
         break;
     }
-
-
 
     return 0;
 }
 void addarticle()
 {
-
 
     FILE *fp, *fptr;
 
@@ -127,16 +113,14 @@ void addarticle()
     fgets(article.content, 1024, stdin);
     strcpy(article.edited, "false");
     fp = fopen(article.title, "wb+");
-    fptr = fopen("usersBlog.txt", "ab+");
+    fptr = fopen("usersBlog.txt", "a");
     fwrite(&article, sizeof(article), 1, fp);
-    fwrite(&article, sizeof(article), 1, fptr);
+    fprintf(fptr, "%s\n", article.title);
     printf("\nYOUR article HAS BEEN ADDED...\n");
 
     fclose(fp);
     fclose(fptr);
-
 }
-
 
 void viewarticle(char *name)
 {
@@ -144,34 +128,25 @@ void viewarticle(char *name)
     FILE *fpte;
     char filename[30];
     struct Blog article;
-    if (strcmp(name,"none")==0){
+    if (strcmp(name, "none") == 0)
+    {
         printf("Enter the name of the file.\n");
         scanf("%s", filename);
     }
     else
-        strcpy(filename,name);
+        strcpy(filename, name);
 
     fpte = fopen(filename, "rb");
     if (fpte != NULL)
     {
 
-
         fread(&article, sizeof(article), 1, fpte);
-
         printf("\nTITLE: %s", article.title);
-
         printf("\nBy: %s", article.username);
-
         printf("\n%s", article.content);
         printf("\nEdited: %s", article.edited);
 
-
         fclose(fpte);
-    }
-    else
-    {
-        printf("\nFile not found! \nTry to find it on the wikipedia here:\n");
-        get_wiki();
     }
 }
 
@@ -203,7 +178,7 @@ void editarticle()
         printf("\nEnter new content: \n");
         getchar();
         fgets(article.content, 1024, stdin);
-        strcpy(article.edited,"true");
+        strcpy(article.edited, "true");
 
         fpte = fopen(filename, "wb");
         fwrite(&article, sizeof(article), 1, fpte);
@@ -218,14 +193,23 @@ void editarticle()
 
 void viewAll()
 {
-    return;
+    int i = 0;
+    char titles[20];
+    FILE *fp;
+    fp = fopen("usersBlog.txt", "r");
+    while (fscanf(fp, "%s", &titles) != EOF)
+    {
+        printf("%s\n", titles);
+    }
+    fclose(fp);
 }
 
 void viewUser()
 {
     struct User user[10];
     struct Blog blog;
-    FILE *fp, *fptr;
+    FILE *fp, *fptr, *fpte;
+    ;
     fp = fopen("Users.txt", "r");
     for (int i = 0; i < 10; i++)
     {
@@ -236,12 +220,12 @@ void viewUser()
         printf("\n%s", user[i].name);
     }
     printf("Choose the blogger: ");
-    char name[50];
+    char name[50], title[20], titles[100][20];
     getchar();
     fgets(name, 50, stdin);
     name[strlen(name) - 1] = 0;
     // to check if any user is found.
-    
+
     int check = 0;
 
     for (int i = 0; i < 10; i++)
@@ -253,15 +237,19 @@ void viewUser()
             printf("\n|Contact no.:\t%s", user[i].contacts);
             printf("\n\t\t\tBlogs\n\n");
             fptr = fopen("usersBlog.txt", "r");
-            while (fread(&blog, sizeof(blog), 1, fptr))
+            int j = 0;
+            while (fscanf(fptr, "%s", &title) != EOF)
             {
+                fpte = fopen(title, "r");
+                fread(&blog, sizeof(blog), 1, fpte);
                 if (!strcmp(blog.username, user[i].name))
+                    ;
                 {
                     printf("\n\n\nTitle:%s\n\n", blog.title);
                     printf("%s\n", blog.content);
                     printf("Edited: %s\n", blog.edited);
-                    
                 }
+                fclose(fpte);
             }
             fclose(fptr);
             check = 1;
@@ -273,10 +261,4 @@ void viewUser()
     {
         printf("\n No user found.\n");
     }
-}
-
-void get_wiki() {
-    char command[1000];
-    sprintf(command, "python3 -c \"from wiki import get_wiki; get_wiki()\"");
-    system(command);
 }

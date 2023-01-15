@@ -37,7 +37,7 @@ struct Blog
 int main()
 
 {
-    // auth();
+    auth();
     int ch;
     char name[] = "none";
 

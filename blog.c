@@ -37,7 +37,7 @@ struct Blog
 int main()
 
 {
-    auth();
+    // auth();
     int ch;
     char name[] = "none";
 
@@ -218,6 +218,16 @@ void editarticle()
 
 void viewAll()
 {
+    int i = 0;
+    char titles[20];
+    struct Blog blog;
+    
+    FILE *fp;
+    fp = fopen("usersBlog.txt", "r");
+     while (fread(&blog, sizeof(struct Blog), 1, fp) == 1) {
+        printf("%s\n",blog.title);
+    }
+    fclose(fp);
     return;
 }
 

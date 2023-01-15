@@ -232,57 +232,83 @@ void viewAll()
 }
 
 void viewUser()
-{
-    struct User user[10];
-    struct Blog blog;
-    FILE *fp, *fptr;
-    fp = fopen("Users.txt", "r");
-    for (int i = 0; i < 10; i++)
-    {
-        fread(&user[i], sizeof(user[i]), 1, fp);
+{    
+    FILE *fp;
+    fp = fopen("Users.txt", "rb");
+    if(!fp){
+        printf("Couldn't open the file!");
+        return;
     }
-    for (int i = 0; i < 10; i++)
+    // count no of users
+    int userCounter = 0;
+    char buffer[1024];
+    // Read the file and count the structs
+    while (fread(&buffer, sizeof(struct User), 1, fp) == 1) {
+        userCounter++;
+    }
+    rewind(fp);
+
+    struct User *user;
+    user = (struct User *) malloc(userCounter * sizeof(struct User));
+    fread(user, sizeof(struct User), userCounter, fp);
+    for (int i = 0; i < userCounter; i++)
     {
         printf("\n%s", user[i].name);
     }
-    printf("Choose the blogger: ");
+
+    // read usersBlog.txt
+    // FILE *fpBlog;
+    // fpBlog = fopen("usersBlog.txt", "r");
+    // if(!fpBlog){
+    //     printf("Couldn't open the file!");
+    //     return;
+    // }
+    // int blogCounter = 0;
+    // while (fread(&buffer, sizeof(struct Blog), 1, fpBlog) == 1) {
+    //     blogCounter++;
+    // }
+    // rewind(fpBlog);
+    // struct Blog *blog;
+    // blog = (struct Blog *) malloc(blogCounter * sizeof(struct Blog));
+    // fread(blog, sizeof(struct Blog), blogCounter, fpBlog);
+
+    printf("\nChoose the blogger: ");
     char name[50];
     getchar();
     fgets(name, 50, stdin);
     name[strlen(name) - 1] = 0;
-    // to check if any user is found.
     
+    // to check if any user is found.
     int check = 0;
-
-    for (int i = 0; i < 10; i++)
+    for (int i = 0; i < userCounter; i++)
     {
         if (!strcmp(user[i].name, name))
         {
             printf("\n\t\t\t\t\t\t%s\n", user[i].name);
             printf("\n|Email:\t\t%s", user[i].email);
-            printf("\n|Contact no.:\t%s", user[i].contacts);
-            printf("\n\t\t\tBlogs\n\n");
-            fptr = fopen("usersBlog.txt", "r");
-            while (fread(&blog, sizeof(blog), 1, fptr))
-            {
-                if (!strcmp(blog.username, user[i].name))
-                {
-                    printf("\n\n\nTitle:%s\n\n", blog.title);
-                    printf("%s\n", blog.content);
-                    printf("Edited: %s\n", blog.edited);
-                    
-                }
-            }
-            fclose(fptr);
+            printf("\n|Contact no.:\n%s", user[i].contacts);
             check = 1;
-            break;
         }
     }
+    if(check==0)
+        printf("No match\n");
     fclose(fp);
-    if (check == 0)
-    {
-        printf("\n No user found.\n");
-    }
+
+    // printf("Blogs");
+    // // read selected user's blog
+    // for (int i = 0; i < blogCounter; i++)
+    // {
+    //     if (!strcmp(blog[i].username, name))
+    //             {
+    //                 printf("\n\n\nTitle:%s\n\n", blog[i].title);
+    //                 printf("%s\n", blog[i].content);
+    //                 printf("Edited: %s\n", blog[i].edited);
+                    
+    //             }
+    // }
+
+    // fclose(fpBlog);
+    return;
 }
 
 void get_wiki() {

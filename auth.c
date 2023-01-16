@@ -8,44 +8,44 @@
 
 struct User
 {
-    char email[50];
-    char password[50];
-    char name[50];
-    char contacts[200];
+	char email[50];
+	char password[50];
+	char name[50];
+	char contacts[200];
 };
 
 bool is_valid_password(char password[]) {
-  // Check password length
-  if (strlen(password) < MIN_PASSWORD_LENGTH) {
-    return false;
-  }
+	// Check password length
+	if (strlen(password) < MIN_PASSWORD_LENGTH) {
+		return false;
+	}
 
-  // Check for at least one digit
-  bool has_digit = false;
-  for (int i = 0; i < strlen(password); i++) {
-    if (isdigit(password[i])) {
-      has_digit = true;
-      break;
-    }
-  }
-  if (!has_digit) {
-    return false;
-  }
+	// Check for at least one digit
+	bool has_digit = false;
+	for (int i = 0; i < strlen(password); i++) {
+		if (isdigit(password[i])) {
+		has_digit = true;
+		break;
+		}
+	}
+	if (!has_digit) {
+		return false;
+	}
 
-  // Check for at least one uppercase letter
-  bool has_uppercase = false;
-  for (int i = 0; i < strlen(password); i++) {
-    if (isupper(password[i])) {
-      has_uppercase = true;
-      break;
-    }
-  }
-  if (!has_uppercase) {
-    return false;
-  }
+	// Check for at least one uppercase letter
+	bool has_uppercase = false;
+	for (int i = 0; i < strlen(password); i++) {
+		if (isupper(password[i])) {
+		has_uppercase = true;
+		break;
+		}
+	}
+	if (!has_uppercase) {
+		return false;
+	}
 
-  // Password is valid
-  return true;
+	// Password is valid
+	return true;
 }
 
 
@@ -53,40 +53,40 @@ int signup() {
     struct User user;
     char password1[50],password2[50];
 
-  printf("\nEnter your name: ");
-  scanf("%s", user.name);
+	printf("\nEnter your name: ");
+	scanf("%s", user.name);
 
-  printf("Enter your email: ");
-  scanf("%s", user.email);
-    printf("Enter your contacts (separated by commas): ");
-    scanf("%s", user.contacts);
+	printf("Enter your email: ");
+	scanf("%s", user.email);
+	printf("Enter your contacts (separated by commas): ");
+	scanf("%s", user.contacts);
+	getchar();
+	printf("Enter your password: ");
+	scanf("%s", password1);
+	if(!is_valid_password(password1))
+	{
+		printf("\nPassword must contain at least one uppercase letter, at least one number and at least 8 characters.\n");
+		return 0;
+	}
 
-  printf("Enter your password: ");
-  scanf("%s", password1);
-    if(!is_valid_password(password1))
-    {
-        printf("\nPassword must contain at least one uppercase letter, at least one number and at least 8 characters.\n");
-        return 0;
-    }
+	printf("\nEnter your password: ");
+	scanf("%s", password2);
 
-  printf("\nEnter your password: ");
-  scanf("%s", password2);
+	if(strcmp(password1,password2)!=0)
+	{
+		printf("\nPassword didn't match!\n");
+		return 0;
+	}
 
-    if(strcmp(password1,password2)!=0)
-    {
-        printf("\nPassword didn't match!\n");
-        return 0;
-    }
+	strcpy(user.password,password1);
 
-    strcpy(user.password,password1);
-
-    FILE *fp;
-    fp = fopen("Users.txt", "ab+");
-    if (fp == NULL)
-     {
-        perror("\nError opening file");
-        return 0;
-    }
+	FILE *fp;
+	fp = fopen("Users.txt", "ab+");
+	if (fp == NULL)
+		{
+		perror("\nError opening file");
+		return 0;
+	}
 
 
     fwrite(&user, sizeof(struct User), 1, fp);

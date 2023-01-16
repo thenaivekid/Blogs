@@ -1,19 +1,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 #include "authentication.h"
 
-
 void addarticle();
-
 void viewarticle();
-
 void editarticle();
-
 void viewAll();
-
 void get_wiki();
-
 void viewUser();
 
 struct User
@@ -25,7 +20,6 @@ struct User
 };
 
 struct Blog
-
 {
     char title[30];
     char username[50];
@@ -34,76 +28,62 @@ struct Blog
 
 };
 
-int main()
-
-{
-    // auth();
+int main(){
+    auth();
     int ch;
     char name[] = "none";
+    char again;
+    do{
+        printf("\nEnter 1 to add article:\n");
+        printf("Enter 2 to view article:\n");
+        printf("Enter 3 to edit article:\n");
+        printf("Enter 4 to view all articles:\n");
+        printf("Enter 5 to view Bloggers:\n");
+        printf("Enter 6 to read wiki from Wikipedia.com:\n");
 
-    printf("\nEnter 1 to add article:\n");
-    printf("Enter 2 to view article:\n");
-    printf("Enter 3 to edit article:\n");
-    printf("Enter 4 to view all articles:\n");
-    printf("Enter 5 to view Bloggers:\n");
-    printf("Enter 6 to read wiki from Wikipedia.com:\n");
+        printf("\n\n\tENTER YOUR CHOICE:");
+        fflush(stdin);
+        scanf("%d", &ch);
 
-    printf("\n\n\tENTER YOUR CHOICE:");
-    fflush(stdin);
-    scanf("%d", &ch);
+        switch (ch){
 
-    switch (ch)
+        case 1:
+            addarticle();
+            break;
 
-    {
+        case 2:
+            viewarticle(name);
+            break;
 
-    case 1:
+        case 3:
+            editarticle();
+            break;
 
-        addarticle();
+        case 4:
+            viewAll();
+            break;
 
-        break;
+        case 5:
+            viewUser();
+            break;
 
-    case 2:
-        
-        viewarticle(name);
+        case 6:
+            get_wiki();
+            break;
 
-        break;
-
-    case 3:
-
-        editarticle();
-
-        break;
-
-    case 4:
-        viewAll();
-        break;
-
-    case 5:
-        viewUser();
-        break;
-
-    case 6:
-        get_wiki();
-        break;
-
-    default:
-
-        printf("\nYOU ENTERED WRONG CHOICE..");
-
-        printf("\nPRESS ANY KEY TO TRY AGAIN");
-
-
-        break;
+        default:
+            printf("\nYOU ENTERED WRONG CHOICE..");
+            break;
+        }
+        printf("Do you want to continue? (y/n) ");
+        scanf(" %c", &again);
+        again = tolower(again);
     }
-
-
-
+    while(again == 'y');
     return 0;
 }
-void addarticle()
-{
 
-
+void addarticle(){
     FILE *fp, *fptr;
 
     struct Blog article;
@@ -137,10 +117,7 @@ void addarticle()
 
 }
 
-
-void viewarticle(char *name)
-{
-
+void viewarticle(char *name){
     FILE *fpte;
     char filename[30];
     struct Blog article;
@@ -154,18 +131,11 @@ void viewarticle(char *name)
     fpte = fopen(filename, "rb");
     if (fpte != NULL)
     {
-
-
         fread(&article, sizeof(article), 1, fpte);
-
         printf("\nTITLE: %s", article.title);
-
         printf("\nBy: %s", article.username);
-
         printf("\n%s", article.content);
-        printf("\nEdited: %s", article.edited);
-
-
+        printf("\nEdited: %s\n", article.edited);
         fclose(fpte);
     }
     else
@@ -175,10 +145,7 @@ void viewarticle(char *name)
     }
 }
 
-void editarticle()
-
-{
-
+void editarticle(){
     FILE *fpte;
 
     struct Blog article;
@@ -219,15 +186,22 @@ void editarticle()
 void viewAll()
 {
     int i = 0;
-    char titles[20];
+    char title[30];
     struct Blog blog;
     
     FILE *fp;
     fp = fopen("usersBlog.txt", "r");
-     while (fread(&blog, sizeof(struct Blog), 1, fp) == 1) {
+    while (fread(&blog, sizeof(struct Blog), 1, fp) == 1) {
         printf("%s\n",blog.title);
     }
     fclose(fp);
+
+    // view a blog
+    
+    printf("Enter the name of blog: ");
+    getchar();
+    scanf("%s",title);
+    viewarticle(title);
     return;
 }
 
@@ -241,7 +215,7 @@ void viewUser()
     }
     // count no of users
     int userCounter = 0;
-    char buffer[1024];
+    char buffer[2048];
     // Read the file and count the structs
     while (fread(&buffer, sizeof(struct User), 1, fp) == 1) {
         userCounter++;
@@ -256,22 +230,7 @@ void viewUser()
         printf("\n%s", user[i].name);
     }
 
-    // read usersBlog.txt
-    // FILE *fpBlog;
-    // fpBlog = fopen("usersBlog.txt", "r");
-    // if(!fpBlog){
-    //     printf("Couldn't open the file!");
-    //     return;
-    // }
-    // int blogCounter = 0;
-    // while (fread(&buffer, sizeof(struct Blog), 1, fpBlog) == 1) {
-    //     blogCounter++;
-    // }
-    // rewind(fpBlog);
-    // struct Blog *blog;
-    // blog = (struct Blog *) malloc(blogCounter * sizeof(struct Blog));
-    // fread(blog, sizeof(struct Blog), blogCounter, fpBlog);
-
+    
     printf("\nChoose the blogger: ");
     char name[50];
     getchar();
@@ -294,20 +253,33 @@ void viewUser()
         printf("No match\n");
     fclose(fp);
 
-    // printf("Blogs");
-    // // read selected user's blog
-    // for (int i = 0; i < blogCounter; i++)
-    // {
-    //     if (!strcmp(blog[i].username, name))
-    //             {
-    //                 printf("\n\n\nTitle:%s\n\n", blog[i].title);
-    //                 printf("%s\n", blog[i].content);
-    //                 printf("Edited: %s\n", blog[i].edited);
-                    
-    //             }
-    // }
+    // show blogs by selected user
+    FILE *fpBlog;
+    fpBlog = fopen("usersBlog.txt", "r");
+    if(!fpBlog){
+        printf("Couldn't open the file!");
+        return;
+    }
+    int blogCounter = 0;
+    while (fread(&buffer, sizeof(struct Blog), 1, fpBlog) == 1) {
+        blogCounter++;
+    }
+    rewind(fpBlog);
+    struct Blog *blog;
+    blog = (struct Blog *) malloc(blogCounter * sizeof(struct Blog));
+    fread(blog, sizeof(struct Blog), blogCounter, fpBlog);
 
-    // fclose(fpBlog);
+    for(int i= 0; i<blogCounter; i++){
+        if (strcmp(blog[i].username,name)==0){
+            printf("\n%d.%s\n",i,blog[i].title);
+            printf("%s\n",blog[i].content);
+            printf("Edited: %s\n",blog[i].edited);
+        }
+    }
+
+    fclose(fpBlog);
+    free(user);
+    free(blog);
     return;
 }
 
@@ -315,4 +287,5 @@ void get_wiki() {
     char command[1000];
     sprintf(command, "python3 -c \"from wiki import get_wiki; get_wiki()\"");
     system(command);
+    return;
 }

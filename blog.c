@@ -29,7 +29,7 @@ struct Blog
 };
 
 int main(){
-    // auth();
+    auth();
     int ch;
     char name[] = "none";
     char again;
@@ -104,9 +104,9 @@ void addarticle(){
     strcpy(article.username, username);
     strcpy(article.content, content);
 
-    printf("%s\n",article.title);
-    printf("%s\n",article.username);
-    printf("%s\n",article.content);
+    // printf("%s\n",article.title);
+    // printf("%s\n",article.username);
+    // printf("%s\n",article.content);
 
 // write the blog in a file with the name title.
     fp = fopen(title, "wb");

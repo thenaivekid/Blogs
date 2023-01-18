@@ -29,7 +29,7 @@ struct Blog
 };
 
 int main(){
-    auth();
+    // auth();
     int ch;
     char name[] = "none";
     char again;
@@ -84,29 +84,71 @@ int main(){
 }
 
 void addarticle(){
-    FILE *fblog, *fUsersBlog;
-
+    FILE *fp;
+    char title[30],username[30],content[1024];
     struct Blog article;
 
     printf("\n\tENTER TITLE: ");
     getchar();
-    fgets(article.title,30,stdin);
+    scanf("%s",title);
     printf("\n\tENTER USERNAME: ");
     getchar();
-    fgets(article.username,30,stdin);
+    fgets(username,30,stdin);
     printf("\n\tENTER Content: ");
-    getchar();
-    fgets(article.content, 1024, stdin);
+    // getchar();
+    fgets(content, 1024, stdin);
+
+
     strcpy(article.edited, "false");
-    fblog = fopen(article.title, "wb+");
-    fUsersBlog = fopen("usersBlog.txt", "ab+");
-    fwrite(&article, sizeof(article), 1, fblog);
-    fwrite(&article, sizeof(article), 1, fUsersBlog);
+    strcpy(article.title, title);
+    strcpy(article.username, username);
+    strcpy(article.content, content);
+
+    printf("%s\n",article.title);
+    printf("%s\n",article.username);
+    printf("%s\n",article.content);
+
+// write the blog in a file with the name title.
+    fp = fopen(title, "wb");
+    if (fp ==NULL)
+        printf("can't open file.");
+    fwrite(&article, sizeof(struct Blog), 1, fp);
+    if(fwrite==0){
+        printf("couldn't write in the file.");
+        fclose(fp);
+        exit(1);
+    }
     printf("\nYOUR article HAS BEEN ADDED...\n");
+    fclose(fp);
 
-    fclose(fblog);
-    fclose(fUsersBlog);
+    fp = fopen(title, "wb");
+    if (fp ==NULL){
+        printf("can't open file.");
+        exit(1);
+    }
+    fwrite(&article, sizeof(struct Blog), 1, fp);
+    if(fwrite==0){
+        printf("couldn't write in the file.");
+        fclose(fp);
+        exit(1);
+    }
+    printf("\nYOUR article HAS BEEN ADDED in a file...\n");
+    fclose(fp);
 
+    // save the blog in userwiseBlog file 
+    fp = fopen("userwiseBlog.dat", "ab+");
+    if (fp ==NULL){
+        printf("can't open file.");
+        exit(1);
+    }
+    fwrite(&article, sizeof(struct Blog), 1, fp);
+    if(fwrite==0){
+        printf("couldn't write in the file.");
+        fclose(fp);
+        exit(1);
+    }
+    printf("\nYOUR article HAS BEEN ADDED to userwiseBlog...\n");
+    fclose(fp);
 }
 
 void viewarticle(char *name){
@@ -146,50 +188,44 @@ void editarticle(){
     printf("\nEnter the name of the file.\n");
     scanf("%s", filename);
 
-    fpte = fopen(filename, "rb");
-    if (fpte != NULL)
+    fpte = fopen(filename,"rb");
+    if (fpte == NULL)
     {
-
-        fread(&article, sizeof(article), 1, fpte);
-
-        printf("\nTITLE: %s", article.title);
-
-        printf("\nBy: %s", article.username);
-
-        printf("\n%s", article.content);
-
+        printf("can't open the file");
         fclose(fpte);
-        printf("\nEnter new content: \n");
-        getchar();
-        fgets(article.content, 1024, stdin);
-        strcpy(article.edited,"true");
+        exit(1);
+    }
 
-        fpte = fopen(filename, "wb");
-        fwrite(&article, sizeof(article), 1, fpte);
-        fclose(fpte);
-        printf("\nChanges saved.");
-    }
-    else
-    {
-        printf("File not found!");
-    }
+    fread(&article, sizeof(struct Blog), 1, fpte);
+    printf("\nTITLE: %s", article.title);
+    printf("\nBy: %s", article.username);
+    printf("\n%s", article.content);
+    fclose(fpte);
+    printf("\nEnter new content: \n");
+    getchar();
+    fgets(article.content, 1024, stdin);
+    strcpy(article.edited,"true");
+
+    fpte = fopen(filename, "wb");
+    fwrite(&article, sizeof(article), 1, fpte);
+    fclose(fpte);
+    printf("\nChanges saved  to blog file.");
+    return;
 }
 
 void viewAll()
 {
-    int i = 0;
     char title[30];
     struct Blog blog;
     
     FILE *fp;
-    fp = fopen("usersBlog.txt", "r");
-    while (fread(&blog, sizeof(struct Blog), 1, fp) == 1) {
+    fp = fopen("userwiseBlog.dat", "rb");
+    while (fread(&blog,sizeof(struct Blog), 1, fp) == 1) {
         printf("%s\n",blog.title);
     }
     fclose(fp);
 
     // view a blog
-    
     printf("Enter the name of blog: ");
     getchar();
     scanf("%s",title);
@@ -200,9 +236,9 @@ void viewAll()
 void viewUser()
 {    
     FILE *fp;
-    fp = fopen("Users.txt", "rb");
+    fp = fopen("Users.txt","rb");
     if(!fp){
-        printf("Couldn't open the file!");
+        printf("Couldn't open the users file file!");
         return;
     }
     // count no of users
@@ -227,7 +263,6 @@ void viewUser()
     char name[50];
     getchar();
     fgets(name, 50, stdin);
-    name[strlen(name) - 1] = 0;
     
     // to check if any user is found.
     int check = 0;
@@ -246,20 +281,19 @@ void viewUser()
     fclose(fp);
 
     // show blogs by selected user
-    FILE *fpBlog;
-    fpBlog = fopen("usersBlog.txt", "r");
-    if(!fpBlog){
-        printf("Couldn't open the file!");
+    fp = fopen("userwiseBlog.dat", "rb");
+    if(!fp){
+        printf("Couldn't open the userwiseBlog file!");
         return;
     }
     int blogCounter = 0;
-    while (fread(&buffer, sizeof(struct Blog), 1, fpBlog) == 1) {
+    while (fread(&buffer, sizeof(struct Blog), 1, fp) == 1) {
         blogCounter++;
     }
-    rewind(fpBlog);
+    rewind(fp);
     struct Blog *blog;
     blog = (struct Blog *) malloc(blogCounter * sizeof(struct Blog));
-    fread(blog, sizeof(struct Blog), blogCounter, fpBlog);
+    fread(blog, sizeof(struct Blog), blogCounter, fp);
     printf("\nBlogs\n");
     for(int i= 0; i<blogCounter; i++){
         if (strcmp(blog[i].username,name)==0){
@@ -269,7 +303,7 @@ void viewUser()
         }
     }
 
-    fclose(fpBlog);
+    fclose(fp);
     free(user);
     free(blog);
     return;

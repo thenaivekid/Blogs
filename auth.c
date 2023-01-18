@@ -93,6 +93,7 @@ int signup() {
     if (fwrite != 0)
     {
         printf("\n\nUser resgistration success, \nLogged in as %s\n", user.name);
+        fclose(fp);
         return 1;
     }
     else
@@ -138,14 +139,15 @@ int login()
                 system("cls");
                 printf("\n\t\t\t\t\t\tWelcome %s\n", user[i].name);
                 printf("\n|Email:\t\t%s", user[i].email);
-                printf("\n|Contact no.:\t%s", user[i].contacts);
-                        fclose(fp);
+                printf("\n|Contacts:\t%s\n", user[i].contacts);
+                fclose(fp);
                 return 1;
             }
             else
             {
                 printf("\n\nInvalid Password!");
-                        return 0;
+                fclose(fp);
+                return 0;
             }
         }
     }

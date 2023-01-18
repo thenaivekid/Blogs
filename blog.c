@@ -84,36 +84,28 @@ int main(){
 }
 
 void addarticle(){
-    FILE *fp, *fptr;
+    FILE *fblog, *fUsersBlog;
 
     struct Blog article;
 
-    fflush(stdin);
-
     printf("\n\tENTER TITLE: ");
-
-    scanf("%s", article.title);
-
-    fflush(stdin);
-
+    getchar();
+    fgets(article.title,30,stdin);
     printf("\n\tENTER USERNAME: ");
-
-    scanf("%s", article.username);
-
-    fflush(stdin);
-
+    getchar();
+    fgets(article.username,30,stdin);
     printf("\n\tENTER Content: ");
     getchar();
     fgets(article.content, 1024, stdin);
     strcpy(article.edited, "false");
-    fp = fopen(article.title, "wb+");
-    fptr = fopen("usersBlog.txt", "ab+");
-    fwrite(&article, sizeof(article), 1, fp);
-    fwrite(&article, sizeof(article), 1, fptr);
+    fblog = fopen(article.title, "wb+");
+    fUsersBlog = fopen("usersBlog.txt", "ab+");
+    fwrite(&article, sizeof(article), 1, fblog);
+    fwrite(&article, sizeof(article), 1, fUsersBlog);
     printf("\nYOUR article HAS BEEN ADDED...\n");
 
-    fclose(fp);
-    fclose(fptr);
+    fclose(fblog);
+    fclose(fUsersBlog);
 
 }
 
@@ -268,7 +260,7 @@ void viewUser()
     struct Blog *blog;
     blog = (struct Blog *) malloc(blogCounter * sizeof(struct Blog));
     fread(blog, sizeof(struct Blog), blogCounter, fpBlog);
-
+    printf("\nBlogs\n");
     for(int i= 0; i<blogCounter; i++){
         if (strcmp(blog[i].username,name)==0){
             printf("\n%d.%s\n",i,blog[i].title);

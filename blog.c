@@ -260,9 +260,9 @@ void viewUser()
 
     
     printf("\nChoose the blogger: ");
-    char name[50];
+    char name[30];
     getchar();
-    fgets(name, 50, stdin);
+    fgets(name, 30, stdin);
     
     // to check if any user is found.
     int check = 0;

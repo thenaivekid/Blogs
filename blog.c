@@ -29,7 +29,7 @@ struct Blog
 };
 
 int main(){
-    auth();
+    // auth();
     int ch;
     char name[] = "none";
     char again;
@@ -85,7 +85,7 @@ int main(){
 
 void addarticle(){
     FILE *fp;
-    char title[30],username[30],content[1024];
+    char title[30],username[30],content[30];
     struct Blog article;
 
     printf("\n\tENTER TITLE: ");
@@ -93,9 +93,9 @@ void addarticle(){
     scanf("%s",title);
     printf("\n\tENTER USERNAME: ");
     getchar();
-    fgets(username,30,stdin);
+    scanf("%s",username);
     printf("\n\tENTER Content: ");
-    // getchar();
+    getchar();
     fgets(content, 1024, stdin);
 
 
@@ -249,6 +249,7 @@ void viewUser()
         userCounter++;
     }
     rewind(fp);
+   
 
     struct User *user;
     user = (struct User *) malloc(userCounter * sizeof(struct User));
@@ -262,7 +263,7 @@ void viewUser()
     printf("\nChoose the blogger: ");
     char name[30];
     getchar();
-    fgets(name, 30, stdin);
+    scanf("%s",name);
     
     // to check if any user is found.
     int check = 0;
@@ -276,9 +277,11 @@ void viewUser()
             check = 1;
         }
     }
-    if(check==0)
+    if(check==0){
         printf("No match\n");
-    fclose(fp);
+        fclose(fp); 
+        return;
+    }
 
     // show blogs by selected user
     fp = fopen("userwiseBlog.dat", "rb");

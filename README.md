@@ -1,5 +1,7 @@
 # Blog
-## Written entirely in C programmng language.
+# Read auth.c and blog.c to get insight on the code.
+## Written in C programmng language.
+
 ### Introduction
 Wiki is very popular way of sharing knowledge that we have to others who need it and to gain knowledge from experts. People with common interest can meet and colaborate and come of with a better idea for everybody else. This CLI applications makes it possible.
 

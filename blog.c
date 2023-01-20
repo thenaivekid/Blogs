@@ -4,11 +4,11 @@
 #include <ctype.h>
 #include "authentication.h"
 
-void addarticle();
-void viewarticle();
-void editarticle();
+void addArticle();
+void viewArticle();
+void editArticle();
 void viewAll();
-void get_wiki();
+void getWiki();
 void viewUser();
 
 struct User
@@ -48,15 +48,15 @@ int main(){
         switch (ch){
 
         case 1:
-            addarticle();
+            addArticle();
             break;
 
         case 2:
-            viewarticle(name);
+            viewArticle(name);
             break;
 
         case 3:
-            editarticle();
+            editArticle();
             break;
 
         case 4:
@@ -68,7 +68,7 @@ int main(){
             break;
 
         case 6:
-            get_wiki();
+            getWiki();
             break;
 
         default:
@@ -83,7 +83,7 @@ int main(){
     return 0;
 }
 
-void addarticle(){
+void addArticle(){
     FILE *fp;
     char title[30],username[30],content[30];
     struct Blog article;
@@ -151,7 +151,7 @@ void addarticle(){
     fclose(fp);
 }
 
-void viewarticle(char *name){
+void viewArticle(char *name){
     FILE *fpte;
     char filename[30];
     struct Blog article;
@@ -175,11 +175,11 @@ void viewarticle(char *name){
     else
     {
         printf("\nFile not found! \nTry to find it on the wikipedia here:\n");
-        get_wiki();
+        getWiki();
     }
 }
 
-void editarticle(){
+void editArticle(){
     FILE *fpte;
 
     struct Blog article;
@@ -229,7 +229,7 @@ void viewAll()
     printf("Enter the name of blog: ");
     getchar();
     scanf("%s",title);
-    viewarticle(title);
+    viewArticle(title);
     return;
 }
 
@@ -312,9 +312,9 @@ void viewUser()
     return;
 }
 
-void get_wiki() {
+void getWiki() {
     char command[1000];
-    sprintf(command, "python3 -c \"from wiki import get_wiki; get_wiki()\"");
+    sprintf(command, "python3 -c \"from wiki import getWiki; getWiki()\"");
     system(command);
     return;
 }
